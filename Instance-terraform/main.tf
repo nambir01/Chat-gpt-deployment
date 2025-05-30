@@ -31,7 +31,7 @@ resource "aws_security_group" "allow_all_sg" {
 resource "aws_instance" "web" {
   ami                    = "ami-06b6e5225d1db5f46"
   instance_type          = "t2.large"
-  key_name               = "my key"
+  key_name               = "gpt_accessKeys"
   vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
   user_data              = templatefile("./script.sh", {})
 
@@ -47,7 +47,7 @@ resource "aws_instance" "web" {
 resource "aws_instance" "web2" {
   ami                    = "ami-06b6e5225d1db5f46"
   instance_type          = "t2.medium"
-  key_name               = "my key"
+  key_name               = "gpt_accessKeys"
   vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
 
   tags = {
