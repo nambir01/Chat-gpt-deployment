@@ -1,11 +1,10 @@
-resource "aws_security_group" "Jenkins-sg" {
-  name        = "Jenkins-Security Group"
-  description = "Open 22,443,80,8080,9000,9100,9090,3000"
+resource "aws_security_group" "allow_all_sg" {
+  name        = "Allow-All"
+  description = "Open 22,80,443,8080,9000,9100,9090,3000"
 
-  # Define a single ingress rule to allow traffic on all specified ports
   ingress = [
-    for port in [22, 80, 443, 8080, 9000,9100,9090,3000] : {
-      description      = "TLS from VPC"
+    for port in [22, 80, 443, 8080, 9000, 9100, 9090, 3000] : {
+      description      = "Allow TCP traffic"
       from_port        = port
       to_port          = port
       protocol         = "tcp"
@@ -25,33 +24,36 @@ resource "aws_security_group" "Jenkins-sg" {
   }
 
   tags = {
-    Name = "Jenkins-sg"
+    Name = "Allow-All"
   }
 }
 
-
 resource "aws_instance" "web" {
-  ami                    = "ami-0c7217cdde317cfec"  #change your ami value according to your aws instance
+  ami                    = "ami-06b6e5225d1db5f46"
   instance_type          = "t2.large"
   key_name               = "my key"
-  vpc_security_group_ids = [aws_security_group.Jenkins-sg.id]
+  vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
   user_data              = templatefile("./script.sh", {})
 
   tags = {
     Name = "gpt clone"
   }
+
   root_block_device {
     volume_size = 30
   }
 }
+
 resource "aws_instance" "web2" {
-  ami                    = "ami-0c7217cdde317cfec" #change your ami value according to your aws instance 
+  ami                    = "ami-06b6e5225d1db5f46"
   instance_type          = "t2.medium"
   key_name               = "my key"
-  vpc_security_group_ids = [aws_security_group.Jenkins-sg.id]
+  vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
+
   tags = {
-    Name = "Monitering via grafana"
+    Name = "Monitoring via Grafana"
   }
+
   root_block_device {
     volume_size = 30
   }
